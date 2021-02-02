@@ -1,25 +1,9 @@
-const fs = require('fs');
-
-const { getTransferEvents } = require('../lib/eth');
-const { dataPath, chunkSize } = require('../config');
+const Service = require('../services');
 
 
 const getUnFinishedToken = () => {
-  const files = fs.readdirSync(dataPath);
 
-  const unFinishedList = [];
-  for (let i = 0; i < files.length; i += 1) {
-    let data = fs.readFileSync(`${dataPath}/${files[i]}`);
-    data = JSON.parse(data);
-    if (!data.finished) unFinishedList.push({
-      file: files[i],
-      nowBlock: data.nowBlock,
-      endBlock: data.endBlock,
-      contractAddress: files[i].split(".")[0]
-    });
-  }
 
-  return unFinishedList;
 }
 
 const parseTransferEvents = async (contractAddress, startBlock, endBlock) => {

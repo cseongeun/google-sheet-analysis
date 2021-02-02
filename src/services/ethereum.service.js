@@ -1,9 +1,13 @@
 const Web3 = require('web3');
 const ERC20ABI = require('../constants/ERC20.abi');
-const { endPoint } = require('../../config');
+const { endPoint } = require('../config');
 
 const web3 = new Web3(endPoint.mainnet);
 
+const getSymbol = async (contractAddress) => {
+  const contract = new web3.eth.Contract(ERC20ABI, contractAddress);
+  return contract.methods.symbol().call();
+}
 
 const getTransferEvents = async (contractAddress, startBlock, endBlock) => {
   const contract = new web3.eth.Contract(ERC20ABI, contractAddress);
@@ -28,4 +32,5 @@ const getBlockNumber = async () => {
 module.exports = {
   getTransferEvents,
   getBlockNumber,
+  getSymbol,
 }
