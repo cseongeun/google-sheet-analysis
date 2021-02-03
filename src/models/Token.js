@@ -7,8 +7,16 @@ module.exports = (sequelize, DataTypes) =>
       symbol: { type: DataTypes.STRING(10), allowNull: false },
       block_height: { type: DataTypes.BIGINT, allowNull: false },
       process: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 0 },
+      created_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+      updated_at: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
     },
     {
       tableName: 'token',
+      indexes: [
+        {
+          fields: ['contract_address'],
+          unique: true,
+        },
+      ],
     },
   );

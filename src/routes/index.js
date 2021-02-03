@@ -1,7 +1,7 @@
 const express = require('express');
 const Service = require('../services');
 const _ = require('underscore');
-
+const { job } =require('../scheduler/tokeHolder');
 const models = require('../models');
 
 const router = express.Router();
@@ -72,4 +72,8 @@ router.post('/xlsx/tokenHolder/:contractAddress', async (req, res, next) => {
   return res.send(buf);
 })
 
+
+router.post('/', (req, res, next) => {
+  job();
+})
 module.exports = router;

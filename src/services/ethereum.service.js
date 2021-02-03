@@ -27,10 +27,14 @@ const getBlockNumber = async () => {
   return web3.eth.getBlockNumber();
 }
 
+const getBlock = async (blockHeight) => {
+  return web3.eth.getBlock(blockHeight);
+}
 
 
 module.exports = {
   getTransferEvents,
   getBlockNumber,
   getSymbol,
+  getBlock,
 }

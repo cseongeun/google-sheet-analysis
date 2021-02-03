@@ -14,7 +14,9 @@ module.exports = {
     port: 3306,
     host: 'localhost',
     dialect: 'mysql',
-
+    define: {
+      underscored: true,
+    },
     pool: {
       max: 20,
       min: 0,
