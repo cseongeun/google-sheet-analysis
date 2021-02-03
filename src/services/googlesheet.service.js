@@ -7,8 +7,8 @@ const SUMMARY_SHEET = 'SUMMARY';
 
 const CELL = {
   SUMMARY: 'A1:F1000',
-  TRANSACTIONS: 'E1:I1',
-  TRANSACTION_COUNT_PER_ADDRESS: 'L1:M1'
+  TRANSACTIONS: 'A1:E',
+  TRANSACTION_COUNT_PER_ADDRESS: 'H1:I'
 }
 
 // // [rowIndex, columnIndex]  (A5:C5)
@@ -97,9 +97,6 @@ const updateCell = async (title, loadCell, position, value, textFormat, valueTyp
   await sheet.saveUpdatedCells();
 }
 
-const updateEndBlock = async (symbol, endBlock) => {
-  await updateSummary(symbol, endBlock, true);
-}
 
 const addSummary = async (symbol, contractAddress, startBlock, endBlock) => {
   const doc = await accessSheet();
@@ -109,7 +106,7 @@ const addSummary = async (symbol, contractAddress, startBlock, endBlock) => {
   await sheet.addRow([symbol, contractAddress, startBlock, endBlock, true, new Date()])
 }
 
-const updateSummary = async (symbol, endBlock, finished) => {
+const updateSummary = async (symbol, nowBlock, endBlock, finished) => {
   const doc = await accessSheet();
   const sheet = await doc.sheetsByTitle[SUMMARY_SHEET];
 
@@ -119,8 +116,9 @@ const updateSummary = async (symbol, endBlock, finished) => {
   const findIndex = rows.findIndex(r => r['심볼'] === symbol);
 
   const updateRow = rows[findIndex];
-  updateRow['작업 여부'] = finished;
+  updateRow['작업 완료 블록'] = nowBlock;
   updateRow['작업 목표 블록'] = endBlock;
+  updateRow['작업 여부'] = finished;
   updateRow['날짜'] = new Date();
   await updateRow.save(); 
 }
@@ -147,7 +145,7 @@ const getInfo = async (symbol) => {
 const createSheetInitScan = async (symbol, contractAddress, startBlock, endBlock) => {
   const sheet = await createSheet(symbol);
   await sheet.setHeaderRow(['블록 높이', '트랜잭션 해시', '보낸 주소', '받는 주소', '수량', '', '', '주소', '건수'])
-  await addSummary(symbol, contractAddress, startBlock, endBlock);
+  // await addSummary(symbol, contractAddress, startBlock, endBlock);
   // await updateCell(symbol, CELL.INFO, PROPERTY.INFO.NOW_BLOCK.VALUE, startBlock, TEXT_FORMAT.bold, VALUE_TYPE.number, HORIZONETAL_ALIGN.right);  
   // await updateCell(symbol, CELL.INFO, PROPERTY.INFO.END_BLOCK.VALUE, endBlock, TEXT_FORMAT.bold, VALUE_TYPE.number, HORIZONETAL_ALIGN.right);
 }
@@ -168,6 +166,14 @@ const getProcessSymbol = async () => {
   return result;
 } 
 
+const appendTransaction = async (symbol, data) => {
+  const doc = await accessSheet();
+  const sheet = await doc.sheetsByTitle[symbol];
+  
+  await sheet.loadCells(CELL.TRANSACTIONS);
+  await sheet.addRows(data);
+}
+
 
 
 
@@ -177,8 +183,8 @@ module.exports = {
   createSheetInitScan,
   updateCell,
   getInfo,
-  updateEndBlock,
   addSummary,
   updateSummary,
   getProcessSymbol,
+  appendTransaction,
 }
